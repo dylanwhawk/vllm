@@ -69,7 +69,7 @@ def _apply_top_p_top_k(
 @pytest.mark.parametrize("inputs", INPUTS_TEST)
 @pytest.mark.parametrize("topps", TOPS_TEST)
 @pytest.mark.parametrize("topks", TOPK_TEST)
-@pytest.mark.parameterize("data_type", DTYPE_TEST)
+@pytest.mark.parametrize("data_type", DTYPE_TEST)
 def test_topk_speed(inputs, topps, topks, data_type):
     logits = inputs.type(data_type)
     start = torch.cuda.Event(enable_timing=True)
@@ -101,7 +101,7 @@ def test_topk_speed(inputs, topps, topks, data_type):
 @pytest.mark.parametrize("inputs", INPUTS_TEST)
 @pytest.mark.parametrize("topps", TOPS_TEST)
 @pytest.mark.parametrize("topks", TOPK_TEST)
-@pytest.mark.parameterize("data_type", DTYPE_TEST)
+@pytest.mark.parametrize("data_type", DTYPE_TEST)
 def test_topk_acc(inputs, topps, topks, data_type):
     logits = inputs.type(data_type)
     p = torch.FloatTensor(topps).to(logits.device)

@@ -23,6 +23,9 @@ Alongside each architecture, we include some popular models that use it.
   * - :code:`ChatGLMModel`
     - ChatGLM
     - :code:`THUDM/chatglm2-6b`, :code:`THUDM/chatglm3-6b`, etc.
+  * - :code:`DeciLMForCausalLM`
+    - DeciLM
+    - :code:`Deci/DeciLM-7B`, :code:`Deci/DeciLM-7B-instruct`, etc.
   * - :code:`BloomForCausalLM`
     - BLOOM, BLOOMZ, BLOOMChat
     - :code:`bigscience/bloom`, :code:`bigscience/bloomz`, etc.
@@ -44,6 +47,9 @@ Alongside each architecture, we include some popular models that use it.
   * - :code:`InternLMForCausalLM`
     - InternLM
     - :code:`internlm/internlm-7b`, :code:`internlm/internlm-chat-7b`, etc.
+  * - :code:`InternLM2ForCausalLM`
+    - InternLM2
+    - :code:`internlm/internlm2-7b`, :code:`internlm/internlm2-chat-7b`, etc.
   * - :code:`LlamaForCausalLM`
     - LLaMA, LLaMA-2, Vicuna, Alpaca, Koala, Guanaco
     - :code:`meta-llama/Llama-2-13b-hf`, :code:`meta-llama/Llama-2-70b-hf`, :code:`openlm-research/open_llama_13b`, :code:`lmsys/vicuna-13b-v1.3`, :code:`young-geng/koala`, etc.
@@ -65,6 +71,12 @@ Alongside each architecture, we include some popular models that use it.
   * - :code:`QWenLMHeadModel`
     - Qwen
     - :code:`Qwen/Qwen-7B`, :code:`Qwen/Qwen-7B-Chat`, etc.
+  * - :code:`Qwen2ForCausalLM`
+    - Qwen2
+    - :code:`Qwen/Qwen2-beta-7B`, :code:`Qwen/Qwen2-beta-7B-Chat`, etc.
+  * - :code:`StableLMEpochForCausalLM`
+    - StableLM
+    - :code:`stabilityai/stablelm-3b-4e1t/` , :code:`stabilityai/stablelm-base-alpha-7b-v2`, etc.
   * - :code:`YiForCausalLM`
     - Yi
     - :code:`01-ai/Yi-6B`, :code:`01-ai/Yi-34B`, etc.
@@ -90,7 +102,7 @@ Alternatively, you can raise an issue on our `GitHub <https://github.com/vllm-pr
     If vLLM successfully generates text, it indicates that your model is supported.
 
 .. tip::
-    To use models from `ModelScope <www.modelscope.cn>`_ instead of HuggingFace Hub, set an environment variable:
+    To use models from `ModelScope <https://www.modelscope.cn>`_ instead of HuggingFace Hub, set an environment variable:
 
     .. code-block:: shell
 
