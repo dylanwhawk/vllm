@@ -156,6 +156,7 @@ class OpenAIServing:
 
         input_ids = prompt_ids if prompt_ids is not None else self.tokenizer(
             prompt).input_ids
+        input_text = prompt if prompt is not None else self.tokenizer.decode(prompt_ids)
         token_num = len(input_ids)
 
         if request.max_tokens is None:
@@ -169,4 +170,4 @@ class OpenAIServing:
                 f"{request.max_tokens} in the completion). "
                 f"Please reduce the length of the messages or completion.", )
         else:
-            return input_ids
+            return input_ids, input_text
