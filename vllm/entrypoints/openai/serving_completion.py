@@ -98,31 +98,6 @@ async def completion_stream_generator(
                 ]).model_dump_json(exclude_unset=True)
             yield f"data: {response_json}\n\n"
 
-            if output.finish_reason is not None:  # return final usage
-                logprobs = LogProbs() if request.logprobs is not None else None
-                prompt_tokens = len(res.prompt_token_ids)
-                completion_tokens = len(output.token_ids)
-                final_usage = UsageInfo(
-                    prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens,
-                    total_tokens=prompt_tokens + completion_tokens,
-                )
-                response_json = CompletionStreamResponse(
-                    id=request_id,
-                    created=created_time,
-                    model=model_name,
-                    choices=[
-                        CompletionResponseStreamChoice(
-                            index=i,
-                            text="",
-                            logprobs=logprobs,
-                            finish_reason=output.finish_reason,
-                        )
-                    ],
-                    usage=final_usage,
-                ).model_dump_json(exclude_unset=True)
-                yield f"data: {response_json}\n\n"
-
     yield "data: [DONE]\n\n"
 
 

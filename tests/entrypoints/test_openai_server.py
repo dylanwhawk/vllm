@@ -5,6 +5,7 @@ import time
 import sys
 import pytest
 import requests
+import random
 import ray  # using Ray for overall ease of process management, parallel requests, and debugging.
 import openai  # use the official client for correctness check
 from huggingface_hub import snapshot_download  # downloading lora to test lora requests
@@ -356,6 +357,69 @@ async def test_logits_bias(server, client: openai.AsyncOpenAI):
                     for token in response_tokens},
     )
     assert first_response != completion.choices[0].text
+
+@pytest.mark.parametrize(
+    # first test base model, then test loras
+    "model_name",
+    [MODEL_NAME, "zephyr-lora", "zephyr-lora2"],
+)
+async def test_random_completion(server, client: openai.AsyncOpenAI,
+                                 model_name: str):
+    prompt_as_str = "Hello, my name is"
+    prompt_as_tokens = [100, 100, 100, 100, 100]
+
+    # Get expected output for model
+    completion = await client.completions.create(model=model_name,
+                                                 prompt=prompt_as_str,
+                                                 max_tokens=10,
+                                                 temperature=0.0)
+    expected_output = completion.choices[0].text
+
+    # Assign random parameters
+    prompt = random.choice([prompt_as_str, prompt_as_tokens])
+    echo = random.choice([True, False])
+    frequency_penalty = random.choice([random.uniform(-2, 2), None])
+    logit_bias = random.choice([{"1000": -100}, None])
+    logprobs = random.choice(list(range(0, 6)) + [None])
+    max_tokens = random.choice(list(range(1, 5)) + [None])
+    presence_penalty = random.choice([random.uniform(-2, 2), None])
+    seed = random.choice([12, None])
+    stop = random.choice(["test", ["test", "test 2"], None])
+    stream = random.choice([True, False, None])
+    temperature = random.choice([0.0, random.uniform(0, 2), None])
+    top_p = random.choice([random.uniform(0, 1), None])
+    best_of = random.choice(list(range(1, 3)) + [None]) if top_p else 1 # best_of must be 1 when using greedy sampling
+    n = random.choice(list(range(1, best_of + 1))) if best_of else None # n must be less than or equal to best_of
+
+
+    # Get result
+    completion = await client.completions.create(model=model_name,
+                                                 prompt=prompt,
+                                                 best_of=best_of,
+                                                 echo=echo,
+                                                 frequency_penalty=frequency_penalty,
+                                                 logit_bias=logit_bias,
+                                                 logprobs=logprobs,
+                                                 max_tokens=max_tokens,
+                                                 n=n,
+                                                 presence_penalty=presence_penalty,
+                                                 seed=seed,
+                                                 stop=stop,
+                                                 stream=stream,
+                                                 temperature=temperature,
+                                                 top_p=top_p)
+
+    # Test result depending on random parameters
+    if stream:
+        async for chunk in completion:
+            print(chunk)
+            print("****************")
+    else:
+        assert completion.id is not None
+        assert completion.choices is not None and len(completion.choices) == 1
+        assert completion.choices[0].finish_reason == "length"
+
+    # if temperature is 0 check if it matches expected
 
 
 if __name__ == "__main__":

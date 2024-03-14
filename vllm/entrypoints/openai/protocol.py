@@ -165,7 +165,13 @@ class CompletionRequest(BaseModel):
     length_penalty: Optional[float] = 1.0
 
     def to_sampling_params(self):
-        echo_without_generation = self.echo and self.max_tokens == 0
+        if self.echo and self.max_tokens == 0:
+            max_tokens = 1
+        elif self.max_tokens is None:
+            max_tokens = 16
+        else:
+            max_tokens = self.max_tokens
+
 
         logits_processors = None
         if self.logit_bias:
@@ -182,20 +188,20 @@ class CompletionRequest(BaseModel):
             logits_processors = [logit_bias_logits_processor]
 
         return SamplingParams(
-            n=self.n,
-            best_of=self.best_of,
-            presence_penalty=self.presence_penalty,
-            frequency_penalty=self.frequency_penalty,
+            n=self.n if self.n is not None else 1,
+            best_of=self.best_of if self.best_of is not None else 1,
+            presence_penalty=self.presence_penalty if self.presence_penalty is not None else 0.0,
+            frequency_penalty=self.frequency_penalty if self.frequency_penalty is not None else 0.0,
             repetition_penalty=self.repetition_penalty,
-            temperature=self.temperature,
-            top_p=self.top_p,
+            temperature=self.temperature if self.temperature is not None else 1.0,
+            top_p=self.top_p if self.top_p is not None else 1.0,
             top_k=self.top_k,
             min_p=self.min_p,
             seed=self.seed,
             stop=self.stop,
             stop_token_ids=self.stop_token_ids,
             ignore_eos=self.ignore_eos,
-            max_tokens=self.max_tokens if not echo_without_generation else 1,
+            max_tokens=max_tokens,
             logprobs=self.logprobs,
             use_beam_search=self.use_beam_search,
             early_stopping=self.early_stopping,
@@ -228,7 +234,7 @@ class CompletionResponse(BaseModel):
     created: int = Field(default_factory=lambda: int(time.time()))
     model: str
     choices: List[CompletionResponseChoice]
-    usage: UsageInfo
+    #usage: UsageInfo
 
 
 class CompletionResponseStreamChoice(BaseModel):
@@ -244,7 +250,7 @@ class CompletionStreamResponse(BaseModel):
     created: int = Field(default_factory=lambda: int(time.time()))
     model: str
     choices: List[CompletionResponseStreamChoice]
-    usage: Optional[UsageInfo] = Field(default=None)
+    #usage: Optional[UsageInfo] = Field(default=None)
 
 
 class ChatMessage(BaseModel):
