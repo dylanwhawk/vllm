@@ -315,7 +315,6 @@ async def test_completion_streaming(server, client: openai.AsyncOpenAI,
         temperature=0.0,
     )
     single_output = single_completion.choices[0].text
-    single_usage = single_completion.usage
 
     stream = await client.completions.create(model=model_name,
                                              prompt=prompt,
@@ -326,7 +325,6 @@ async def test_completion_streaming(server, client: openai.AsyncOpenAI,
     async for chunk in stream:
         chunks.append(chunk.choices[0].text)
     assert chunk.choices[0].finish_reason == "length"
-    assert chunk.usage == single_usage
     assert "".join(chunks) == single_output
 
 
